@@ -1,6 +1,6 @@
 import pygame
-import sys
 import time
+import random
 
 pygame.init()
 
@@ -20,6 +20,10 @@ pygame.display.set_caption('A bit Racey')
 clock = pygame.time.Clock()
 
 carImg =pygame.image.load('racecar.png')
+
+
+def things(thingx, thingy, thingw, thingh, color):
+    pygame.draw.rect(gameDisplay, color, [thingx, thingy, thingw, thingh])
 
 def car(x,y):
     gameDisplay.blit(carImg, (x,y))   #0,0 being top left
@@ -52,6 +56,13 @@ def game_loop():
 
     x_change = 0
 
+    thing_startx = random.randrange(0, display_width)
+    thing_starty = -600
+    thing_speed = 7
+    thing_width = 100
+    thing_height = 100
+
+
     gameExit = False
 
     while not gameExit:
@@ -70,10 +81,27 @@ def game_loop():
                     x_change = 0
         x += x_change
         gameDisplay.fill(white)
+
+        # things(thingx, thingy, thingw, thingh, color):
+        things(thing_startx, thing_starty, thing_width, thing_height, black)
+        thing_starty += thing_speed
+
+
         car(x,y)
 
         if x > display_width - car_width or x < 0:
             crash()
+
+        if thing_starty > display_height:
+            thing_starty = 0 - thing_height
+            thing_startx = random.randrange(0, display_width)
+
+
+        if y < thing_starty+thing_height:
+            #print('Y crossed path')
+            if x > thing_startx and x < thing_startx + thing_width or x+car_width > thing_startx and x + car_width < thing_startx+thing_width:
+                #print("Y and X cross over")
+                crash()
 
         pygame.display.update()
         clock.tick(60)
@@ -81,6 +109,6 @@ def game_loop():
 
 game_loop()
 pygame.quit()
-sys.exit()
-#quit()
+quit()
+#sys.exit()
 
